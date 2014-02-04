@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+
+    <title>Quiz</title>
+    <meta name="description" content="Quiz">
+    <meta name="author" content="Casey McTaggart">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <script src="js/static/jquery-1.10.2.min.js"></script>
+    <script src="js/static/handlebars-v1.3.0.js"></script>
+    <script src="http://builds.emberjs.com/beta/ember.js"></script>
+    <script src="http://builds.emberjs.com/beta/ember-data.js"></script>
+    <!--<script src="js/static/ember.js"></script>-->
+    <!--<script src="js/static/ember-data.js"></script>-->
+
+    <script type="text/javascript" src="js/application.js"></script>
+    <script type="text/javascript" src="js/router.js"></script>
+    <script type="text/javascript" src="js/models/question.js"></script>
+    <script type="text/javascript" src="js/views/radio_button.js"></script>
+    <script type="text/javascript" src="js/views/answer_label_view.js"></script>
+    <script type="text/javascript" src="js/controllers/question_controller.js"></script>
+    <script type="text/javascript" src="js/controllers/questions_controller.js"></script>
+</head>
+<body>
+
+<script type="text/x-handlebars" data-template-name="quizmanager">
+    <section id="app">
+        <header id="header">
+            <h1>{{title}}</h1>
+        </header>
+
+        <section id="main">
+            {{outlet}}
+        </section>
+        <section id="submit">
+            <button id="submit-form" {{action "submitAction" false}}>Submit</button>
+            <button id="reset-form" {{action "submitAction" true}}>Reset</button>
+        </section>
+
+        {{#if submitted}}
+            <div id="correct-answers">
+                <strong>Correct answer count:</strong> {{correctAnswers}}/{{totalQuestions}}
+            </div>
+        {{/if}}
+    </section>
+</script>
+
+
+<script type="text/x-handlebars" data-template-name="quizmanager/questions">
+    <ul id="quiz-questions">
+        {{#each itemController="question"}}
+            {{#if controllers.quizmanager.submitted}}
+                <label {{bind-attr class="answeredCorrectly:correct:incorrect"}}>{{questionNumber}}. {{title}}</label>
+            {{else}}
+                <label>{{questionNumber}}. {{title}}</label>
+            {{/if}}
+
+            <ul class="answer-list">
+            {{#each answer in answers}}
+                <li>
+                    {{view Ember.RadioButton selectionBinding="controller.setSelectedAnswer" name=controller.getName value=answer.value selectedAnswer=controller.selectedAnswer}}
+                    {{view Ember.LabelView submittedBinding="controllers.quizmanager.submitted" selectedAnswerBinding="controller.selectedAnswer" answeredCorrectly=controller.answeredCorrectly value=answer.value}}
+                </li>
+            {{/each}}
+            </ul>
+        {{/each}}
+    </ul>
+</script>
+
+<script type="text/x-handlebars" data-template-name="answer-label-view">
+    {{#if view.wasSubmitted}}
+        {{#if view.answerWasSelected}}
+            <label {{bind-attr class="view.answeredCorrectly:correct-answer:incorrect-answer"}}>{{view.value}}</label>
+        {{else}}
+            <label>{{view.value}}</label>
+        {{/if}}
+    {{else}}
+        <label>{{view.value}}</label>
+    {{/if}}
+</script>
+
+</body>
+</html>
