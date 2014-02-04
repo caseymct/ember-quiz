@@ -1,0 +1,28 @@
+# All of rake-pipeline's web goodness lives here.
+require "rake-pipeline-web-filters"
+require "json"
+
+# All of our outputs will be relative to the `public/`
+# directory.
+output "public"
+
+# All of our inputs to the pipeline live under the `app/`
+# directory. We could also specify a glob if we wanted to
+# limit the files in that directory, e.g.:
+#
+#   input "app", "**/*.scss"
+#
+# would limit the input to just scss files. All of our paths
+# inside this Assetfile will be relative to this directory.
+input "app" do
+
+  # Here we specify a match block so we can apply a filter to
+  # a subset of the files in our input directory. We're turning
+  # our handlebars template files into javascript files.
+  match "**/*.handlebars" do
+    handlebars
+  end
+
+end
+
+# vim:ft=ruby
